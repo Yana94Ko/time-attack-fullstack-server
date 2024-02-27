@@ -9,4 +9,12 @@ export class AppController {
   healthCheck(): string {
     return this.appService.healthCheck();
   }
+  @Get('/exception-check')
+  exceptionCheck(): string {
+    return this.appService.exceptionCheck();
+  }
+  @Get('/error-check')
+  errorCheck(): string {
+    return this.appService.errorCheck();
+  }
 }
