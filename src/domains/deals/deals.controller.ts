@@ -58,8 +58,12 @@ export class DealsController {
     return this.dealsService.update(id, dto, file, user);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.dealsService.remove(+id);
+  @Delete(':dealId')
+  @Private('user')
+  remove(
+    @Param('dealId', ParseIntPipe) dealId: number,
+    @DAccountType('user') user: User,
+  ) {
+    return this.dealsService.remove(dealId, user);
   }
 }
