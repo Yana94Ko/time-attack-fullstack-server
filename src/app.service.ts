@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { CustomException } from './exceptions/custom.exception';
+import { ForbiddenException, Injectable } from '@nestjs/common';
 
 @Injectable()
 export class AppService {
@@ -8,7 +7,7 @@ export class AppService {
   }
 
   exceptionCheck(): string {
-    throw new CustomException();
+    throw new ForbiddenException('exception testing');
   }
 
   errorCheck(): string {
