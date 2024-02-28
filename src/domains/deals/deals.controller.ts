@@ -37,8 +37,11 @@ export class DealsController {
   }
 
   @Get()
-  findAll(@Query('type') type: DealOrderType = 'createdAt') {
-    return this.dealsService.findAll(type);
+  findAll(
+    @Query('type') type: DealOrderType = 'createdAt',
+    @Query('cnt', ParseIntPipe) cnt: number = 6,
+  ) {
+    return this.dealsService.findAll(type, cnt);
   }
 
   @Get(':dealId')

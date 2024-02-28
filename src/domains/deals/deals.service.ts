@@ -33,8 +33,11 @@ export class DealsService {
     return deal;
   }
 
-  findAll(type: DealOrderType) {
-    return this.prismaService.deal.findMany({ orderBy: { [type]: 'desc' } });
+  findAll(type: DealOrderType, cnt: number) {
+    return this.prismaService.deal.findMany({
+      orderBy: { [type]: 'desc' },
+      take: cnt ? cnt : undefined,
+    });
   }
 
   findOne(dealId: number, user) {
