@@ -1,1 +1,1 @@
-export type AccountType = 'user' | 'admin' | 'userOrAdmin';
+export type AccountType = 'user' | 'admin' | 'userOrAdmin' | 'loggedIn';

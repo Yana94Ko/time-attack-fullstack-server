@@ -7,15 +7,19 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
+  Req,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '@prisma/client';
+import { Request } from 'express';
 import { DAccountType } from 'src/decorators/accountType.decorator';
 import { Private } from 'src/decorators/private.decorator';
 import { DealCreateDto, DealUpdateDto } from './deals.dto';
 import { DealsService } from './deals.service';
+import { DealOrderType } from './deals.type';
 
 @Controller('deals')
 export class DealsController {
@@ -33,13 +37,13 @@ export class DealsController {
   }
 
   @Get()
-  findAll() {
-    return this.dealsService.findAll();
+  findAll(@Query('type') type: DealOrderType = 'createdAt') {
+    return this.dealsService.findAll(type);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.dealsService.findOne(+id);
+  @Get(':dealId')
+  findOne(@Param('dealId', ParseIntPipe) dealId: number, @Req() req: Request) {
+    return this.dealsService.findOne(dealId, req.user);
   }
 
   @Patch(':dealId')
