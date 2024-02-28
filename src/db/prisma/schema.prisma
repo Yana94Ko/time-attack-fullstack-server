@@ -19,8 +19,8 @@ model User {
   encryptedPassword String
   profile           Profile?
   createdAt         DateTime   @default(now())
-  Bookmark          Bookmark[]
-  Deal              Deal[]
+  bookmarks         Bookmark[]
+  deals             Deal[]
 }
 
 model Profile {
@@ -34,18 +34,19 @@ model Profile {
 }
 
 model Deal {
-  id          Int           @id @default(autoincrement())
-  authorId    String
-  author      User          @relation(fields: [authorId], references: [id])
-  title       String
-  content     String
-  price       Int
-  hit         Int           @default(1)
-  imgUrl      String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  Bookmark    Bookmark[]
-  DealKeyword DealKeyword[]
+  id             Int           @id @default(autoincrement())
+  authorId       String
+  author         User          @relation(fields: [authorId], references: [id])
+  bookmarksCount Int           @default(0)
+  title          String
+  content        String
+  price          Int
+  hit            Int           @default(1)
+  imgUrl         String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  bookmarks      Bookmark[]
+  dealKeywords   DealKeyword[]
 }
 
 model Bookmark {
@@ -54,12 +55,14 @@ model Bookmark {
   deal   Deal   @relation(fields: [dealId], references: [id])
   userId String
   dealId Int
+
+  @@unique([userId, dealId])
 }
 
 model Keyword {
-  id          Int           @id @default(autoincrement())
-  type        String
-  DealKeyword DealKeyword[]
+  id           Int           @id @default(autoincrement())
+  type         String
+  dealKeywords DealKeyword[]
 }
 
 model DealKeyword {

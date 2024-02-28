@@ -41,6 +41,7 @@ export class AllExceptionsFilter extends BaseExceptionFilter {
         message: message,
       });
     } else {
+      console.log(exception);
       response.status(500).json({
         success: false,
         result: null,

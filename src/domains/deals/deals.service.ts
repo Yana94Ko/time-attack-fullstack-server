@@ -9,6 +9,7 @@ import { ConfigService } from '@nestjs/config';
 import { Prisma, User } from '@prisma/client';
 import { PrismaService } from 'src/db/prisma/prisma.service';
 import { DealCreateDto, DealUpdateDto } from './deals.dto';
+import { DealOrderType } from './deals.type';
 
 @Injectable()
 export class DealsService {
@@ -17,7 +18,6 @@ export class DealsService {
     private readonly configService: ConfigService,
   ) {}
   async create(dto: DealCreateDto, file: Express.Multer.File, user: User) {
-    //파일 업로드 진행
     const imgUrl = await this.uploadImgToS3(file);
     if (!file) throw new BadRequestException('File is not Exist');
 
@@ -30,16 +30,24 @@ export class DealsService {
       },
     });
 
-    //성공시 받아온 url로 deal 생성
     return deal;
   }
 
-  findAll() {
-    return `This action returns all deals`;
+  findAll(type: DealOrderType) {
+    return this.prismaService.deal.findMany({ orderBy: { [type]: 'desc' } });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} deal`;
+  findOne(dealId: number, user) {
+    const deal = this.prismaService.deal.update({
+      where: { id: dealId },
+      data: { hit: { increment: 1 } },
+      include: {
+        bookmarks: {
+          where: { userId: user ? user.id : undefined, dealId: dealId },
+        },
+      },
+    });
+    return deal;
   }
 
   async update(
