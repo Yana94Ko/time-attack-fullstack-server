@@ -17,13 +17,17 @@ import { User } from '@prisma/client';
 import { Request } from 'express';
 import { DAccountType } from 'src/decorators/accountType.decorator';
 import { Private } from 'src/decorators/private.decorator';
+import { BookmarksService } from './bookmarks/bookmarks.service';
 import { DealCreateDto, DealUpdateDto } from './deals.dto';
 import { DealsService } from './deals.service';
 import { DealOrderType } from './deals.type';
 
 @Controller('deals')
 export class DealsController {
-  constructor(private readonly dealsService: DealsService) {}
+  constructor(
+    private readonly dealsService: DealsService,
+    private readonly bookmarksService: BookmarksService,
+  ) {}
 
   @Post()
   @Private('user')
@@ -59,6 +63,24 @@ export class DealsController {
     @DAccountType('user') user: User,
   ) {
     return this.dealsService.update(id, dto, file, user);
+  }
+
+  @Post(':dealId/bookmarks')
+  @Private('user')
+  createBookmark(
+    @Param('dealId', ParseIntPipe) dealId: number,
+    @DAccountType('user') user: User,
+  ) {
+    return this.bookmarksService.createBookmark(dealId, user);
+  }
+
+  @Delete(':dealId/bookmarks')
+  @Private('user')
+  deleteBookmark(
+    @Param('dealId', ParseIntPipe) dealId: number,
+    @DAccountType('user') user: User,
+  ) {
+    return this.bookmarksService.deleteBookmark(dealId, user);
   }
 
   @Delete(':dealId')
