@@ -14,11 +14,13 @@ datasource db {
 }
 
 model User {
-  id                String   @id
-  email             String   @unique
+  id                String     @id
+  email             String     @unique
   encryptedPassword String
   profile           Profile?
-  createdAt         DateTime @default(now())
+  createdAt         DateTime   @default(now())
+  Bookmark          Bookmark[]
+  Deal              Deal[]
 }
 
 model Profile {
@@ -29,4 +31,41 @@ model Profile {
   profileImgSrc String?
   location      String?
   updatedAt     DateTime  @updatedAt
+}
+
+model Deal {
+  id          Int           @id @default(autoincrement())
+  authorId    String
+  author      User          @relation(fields: [authorId], references: [id])
+  title       String
+  content     String
+  price       Int
+  hit         Int           @default(1)
+  imgUrl      String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Bookmark    Bookmark[]
+  DealKeyword DealKeyword[]
+}
+
+model Bookmark {
+  id     Int    @id @default(autoincrement())
+  user   User   @relation(fields: [userId], references: [id])
+  deal   Deal   @relation(fields: [dealId], references: [id])
+  userId String
+  dealId Int
+}
+
+model Keyword {
+  id          Int           @id @default(autoincrement())
+  type        String
+  DealKeyword DealKeyword[]
+}
+
+model DealKeyword {
+  id        Int     @id @default(autoincrement())
+  keyword   Keyword @relation(fields: [keywordId], references: [id])
+  deal      Deal    @relation(fields: [dealId], references: [id])
+  keywordId Int
+  dealId    Int
 }

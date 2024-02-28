@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
 import { hash } from 'bcrypt';
@@ -11,6 +12,7 @@ export class UsersService {
   constructor(
     private readonly prismaService: PrismaService,
     private jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
   async signUp(dto: UserSignUpDto) {
     const { email, password } = dto;
@@ -28,7 +30,12 @@ export class UsersService {
       },
     });
     const result = {
-      accessToken: this.jwtService.sign(user),
+      accessToken: this.jwtService.sign(
+        { email: email, sub: user.id, accountType: 'user' },
+        {
+          expiresIn: this.configService.get('JWT_EXPIRES_IN'),
+        },
+      ),
       nickname: user.profile.nickname,
     };
 
