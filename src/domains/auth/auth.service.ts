@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
-import { User } from '@prisma/client';
 import { compare } from 'bcrypt';
 import { PrismaService } from 'src/db/prisma/prisma.service';
 import { InvalidPasswordException } from 'src/exceptions/InvalidPassword.exception';
@@ -20,6 +19,7 @@ export class AuthService {
 
     const user = await this.prismaService.user.findUnique({
       where: { email },
+      include: { profile: { select: { nickname: true } } },
     });
 
     if (!user) throw new UserNotFoundByEmailException();
@@ -29,7 +29,12 @@ export class AuthService {
     if (!validPassword) throw new InvalidPasswordException();
 
     const accessToken = this.jwtService.sign(
-      { email: user.email, sub: user.id, accountType: 'user' },
+      {
+        email: user.email,
+        sub: user.id,
+        accountType: 'user',
+        nickname: user.profile.nickname,
+      },
       {
         expiresIn: this.configService.get('JWT_EXPIRES_IN'),
       },
@@ -38,13 +43,20 @@ export class AuthService {
     return accessToken;
   }
 
-  async refreshToken(user: Pick<User, 'id' | 'email'>) {
+  async refreshToken(user) {
+    console.log('test');
     const accessToken = this.jwtService.sign(
-      { email: user.email, sub: user.id, accountType: 'user' },
+      {
+        email: user.email,
+        sub: user.id,
+        accountType: 'user',
+        nickname: user.profile.nickname,
+      },
       {
         expiresIn: this.configService.get('JWT_EXPIRES_IN'),
       },
     );
+    console.log('accessToken service', accessToken);
 
     return accessToken;
   }

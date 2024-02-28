@@ -1,6 +1,6 @@
-import { Body, Controller, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { DAccountType } from 'src/decorators/accountType.decorator';
 import { Private } from 'src/decorators/private.decorator';
 import { AuthLogInDto } from './auth.dto';
@@ -36,18 +36,18 @@ export class AuthController {
   }
 
   @Post('/accounts/users/refresh-token')
-  @Private('user')
   async refreshAccessToken(
     @Res({ passthrough: true }) res: Response,
-    @DAccountType('user') user: User,
+    @Req() req: Request,
   ) {
-    const accessToken = await this.authService.refreshToken(user);
+    if (!req.user) return false;
+    const accessToken = await this.authService.refreshToken(req.user);
 
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       maxAge: 2 * 60 * 60 * 1000, //2h
     });
 
-    return { accessToken };
+    return true;
   }
 }
