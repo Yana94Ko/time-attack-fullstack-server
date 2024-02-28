@@ -1,32 +1,51 @@
+import { ArgumentsHost, Catch, HttpException } from '@nestjs/common';
+import { BaseExceptionFilter } from '@nestjs/core';
 import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
-import { HttpAdapterHost } from '@nestjs/core';
-
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
+import { Response } from 'express';
 @Catch()
-export class AllExceptionsFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
-
-  catch(exception: unknown, host: ArgumentsHost): void {
-    const { httpAdapter } = this.httpAdapterHost;
-
+export class AllExceptionsFilter extends BaseExceptionFilter {
+  catch(exception: unknown, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
+    const response = ctx.getResponse<Response>();
 
-    const httpStatus =
-      exception instanceof HttpException
-        ? exception.getStatus()
-        : HttpStatus.INTERNAL_SERVER_ERROR;
+    if (
+      exception instanceof PrismaClientInitializationError ||
+      exception instanceof PrismaClientKnownRequestError ||
+      exception instanceof PrismaClientRustPanicError ||
+      exception instanceof PrismaClientUnknownRequestError ||
+      exception instanceof PrismaClientValidationError
+    ) {
+      const status = 400;
+      const message = exception.message.replace(
+        /\/\w+|\n|\{\W+|\(.*?\)|\{.*?\}|\<.*?\>|\d+\s+/gi,
+        '',
+      );
+      response.status(status).json({
+        success: false,
+        result: null,
+        message: message,
+      });
+    } else if (exception instanceof HttpException) {
+      const status = exception.getStatus();
+      const message = exception.message;
 
-    const responseBody = {
-      success: false,
-      result: null,
-      error: { message: 'INTERNAL_SERVER_ERROR - check server terminal' },
-    };
-
-    httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
+      response.status(status).json({
+        success: false,
+        result: null,
+        message: message,
+      });
+    } else {
+      response.status(500).json({
+        success: false,
+        result: null,
+        message: 'Internal server error - check server',
+      });
+    }
   }
 }
