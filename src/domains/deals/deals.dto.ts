@@ -1,4 +1,4 @@
-import { IsNumber, IsNumberString, IsString } from 'class-validator';
+import { IsNumberString, IsString } from 'class-validator';
 
 export class DealCreateDto {
   @IsString()
@@ -14,6 +14,6 @@ export class DealUpdateDto {
   title: string;
   @IsString()
   content: string;
-  @IsNumber()
+  @IsNumberString()
   price: number;
 }

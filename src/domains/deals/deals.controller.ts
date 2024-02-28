@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   UploadedFile,
@@ -13,7 +14,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '@prisma/client';
 import { DAccountType } from 'src/decorators/accountType.decorator';
 import { Private } from 'src/decorators/private.decorator';
-import { DealCreateDto } from './deals.dto';
+import { DealCreateDto, DealUpdateDto } from './deals.dto';
 import { DealsService } from './deals.service';
 
 @Controller('deals')
@@ -41,9 +42,16 @@ export class DealsController {
     return this.dealsService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateDealDto) {
-    return this.dealsService.update(+id, updateDealDto);
+  @Patch(':dealId')
+  @Private('user')
+  @UseInterceptors(FileInterceptor('productImg'))
+  update(
+    @Param('dealId', ParseIntPipe) id: number,
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: DealUpdateDto,
+    @DAccountType('user') user: User,
+  ) {
+    return this.dealsService.update(id, dto, file, user);
   }
 
   @Delete(':id')
