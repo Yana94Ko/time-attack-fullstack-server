@@ -29,7 +29,7 @@ export class AuthService {
     if (!validPassword) throw new InvalidPasswordException();
 
     const accessToken = this.jwtService.sign(
-      { id: user.id, sub: user.email },
+      { email: user.email, sub: user.id, accountType: 'user' },
       {
         expiresIn: this.configService.get('JWT_EXPIRES_IN'),
       },
@@ -40,7 +40,7 @@ export class AuthService {
 
   async refreshToken(user: Pick<User, 'id' | 'email'>) {
     const accessToken = this.jwtService.sign(
-      { id: user.id, sub: user.email },
+      { email: user.email, sub: user.id, accountType: 'user' },
       {
         expiresIn: this.configService.get('JWT_EXPIRES_IN'),
       },

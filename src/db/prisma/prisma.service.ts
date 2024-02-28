@@ -1,5 +1,6 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { generateRandomImgSrc } from 'src/utils/generateRandomImgSrc';
 import { getRandomNickname } from 'src/utils/generateRandomNickname';
 
 export const prismaExtendedClient = (prismaClient: PrismaClient) =>
@@ -14,6 +15,18 @@ export const prismaExtendedClient = (prismaClient: PrismaClient) =>
                 nickname: getRandomNickname(),
               },
             },
+          };
+
+          return query(args);
+        },
+      },
+      deal: {
+        create({ args, query }) {
+          args.data = {
+            ...args.data,
+            imgUrl: args.data.imgUrl
+              ? args.data.imgUrl
+              : generateRandomImgSrc(),
           };
 
           return query(args);

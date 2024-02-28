@@ -9,7 +9,6 @@ import { TransformInterceptor } from './interceptors/transform.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create<INestApplication<Express>>(AppModule);
   const port = 5050;
-
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalInterceptors(new TransformInterceptor());
