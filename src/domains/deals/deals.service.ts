@@ -72,8 +72,10 @@ export class DealsService {
     return deal;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} deal`;
+  remove(dealId: number, user: User) {
+    return this.prismaService.deal.delete({
+      where: { id: dealId, authorId: user.id },
+    });
   }
 
   async uploadImgToS3(file: Express.Multer.File) {
