@@ -9,7 +9,10 @@ import { TransformInterceptor } from './interceptors/transform.interceptor';
 async function bootstrap() {
   const app = await NestFactory.create<INestApplication<Express>>(AppModule);
   const port = 5050;
-
+  app.enableCors({
+    origin: ['http://localhost:3000'],
+    credentials: true,
+  });
   app.use(cookieParser());
   app.useGlobalPipes(new ValidationPipe());
   const { httpAdapter } = app.get(HttpAdapterHost);

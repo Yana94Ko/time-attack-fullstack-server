@@ -54,6 +54,7 @@ export class AuthGuard implements CanActivate {
           //토큰이 있지만 데코레이터가 없다면 req.user에 세팅
           const user = await this.prismaService.user.findFirstOrThrow({
             where: { id },
+            include: { profile: { select: { nickname: true } } },
           });
           request.user = user;
         } else {
@@ -63,6 +64,7 @@ export class AuthGuard implements CanActivate {
           if (accountTypeInDecorator === 'user') {
             const user = await this.prismaService.user.findFirstOrThrow({
               where: { id },
+              include: { profile: { select: { nickname: true } } },
             });
             request.user = user;
           }

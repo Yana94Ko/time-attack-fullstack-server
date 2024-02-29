@@ -29,17 +29,18 @@ export class UsersService {
         profile: { select: { nickname: true } },
       },
     });
-    const result = {
-      accessToken: this.jwtService.sign(
-        { email: email, sub: user.id, accountType: 'user' },
-        {
-          expiresIn: this.configService.get('JWT_EXPIRES_IN'),
-        },
-      ),
-      nickname: user.profile.nickname,
-    };
 
-    return result;
+    return this.jwtService.sign(
+      {
+        email: email,
+        sub: user.id,
+        accountType: 'user',
+        nickname: user.profile.nickname,
+      },
+      {
+        expiresIn: this.configService.get('JWT_EXPIRES_IN'),
+      },
+    );
   }
 
   async findByEmail(email: string) {
