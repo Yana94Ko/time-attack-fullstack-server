@@ -44,7 +44,6 @@ export class AuthService {
   }
 
   async refreshToken(user) {
-    console.log('test');
     const accessToken = this.jwtService.sign(
       {
         email: user.email,
@@ -56,7 +55,6 @@ export class AuthService {
         expiresIn: this.configService.get('JWT_EXPIRES_IN'),
       },
     );
-    console.log('accessToken service', accessToken);
 
     return accessToken;
   }

@@ -25,8 +25,6 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const accessToken = request.cookies['accessToken'];
-    console.log('cookies', request.cookies);
-    console.log('accessToken', accessToken);
     const accountTypeInDecorator =
       this.reflector.getAllAndOverride<AccountType>('accountType', [
         context.getHandler(),
@@ -45,15 +43,12 @@ export class AuthGuard implements CanActivate {
       try {
         const secretKey =
           this.configService.getOrThrow<string>('JWT_SECRET_KEY');
-        console.log('accessToken', accessToken);
         const { sub: id, accountType: accountTypeInAccessToken } =
           this.jwtService.verify(accessToken, {
             secret: secretKey,
           }) as JwtPayload & {
             accountType: AccountType;
           };
-
-        console.log('tttt');
 
         if (!accountTypeInDecorator) {
           //토큰이 있지만 데코레이터가 없다면 req.user에 세팅
@@ -74,7 +69,6 @@ export class AuthGuard implements CanActivate {
             request.user = user;
           }
         }
-        console.log(request.user);
       } catch (e) {
         throw new UnauthorizedException(e.message);
       }

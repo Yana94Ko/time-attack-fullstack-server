@@ -23,7 +23,8 @@ export class DealsService {
 
     const deal = this.prismaService.deal.create({
       data: {
-        ...dto,
+        title: dto.title,
+        content: dto.content,
         price: Number(dto.price),
         imgUrl,
         authorId: user.id,
@@ -33,7 +34,12 @@ export class DealsService {
     return deal;
   }
 
-  findAll(type: DealOrderType, cnt: number) {
+  findAll(type: DealOrderType) {
+    return this.prismaService.deal.findMany({
+      orderBy: { [type]: 'desc' },
+    });
+  }
+  findAll2(type: DealOrderType, cnt: number) {
     return this.prismaService.deal.findMany({
       orderBy: { [type]: 'desc' },
       take: cnt ? cnt : undefined,
