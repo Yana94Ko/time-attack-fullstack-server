@@ -21,6 +21,7 @@ export class AuthController {
       domain: process.env.FRONT_SERVER,
       secure: true,
       httpOnly: true,
+      sameSite: 'none',
       maxAge: 2 * 60 * 60 * 1000, //2h
     });
 
@@ -49,6 +50,7 @@ export class AuthController {
       domain: process.env.FRONT_SERVER,
       secure: true,
       httpOnly: true,
+      sameSite: 'none',
       maxAge: 2 * 60 * 60 * 1000, //2h
     });
 
