@@ -35,7 +35,10 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
     @DAccountType('user') user: User,
   ) {
-    res.clearCookie('accessToken');
+    res.clearCookie('accessToken', {
+      domain:
+        'port-0-time-attack-fullstack-server-am952nltdolcl9.sel5.cloudtype.app',
+    });
     return `${user.email} successfully logout`;
   }
 
