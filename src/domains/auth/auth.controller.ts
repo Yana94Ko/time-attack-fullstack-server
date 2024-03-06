@@ -18,6 +18,8 @@ export class AuthController {
     const accessToken = await this.authService.logIn(dto);
 
     res.cookie('accessToken', accessToken, {
+      domain: process.env.FRONT_SERVER,
+      secure: true,
       httpOnly: true,
       maxAge: 2 * 60 * 60 * 1000, //2h
     });
@@ -44,6 +46,8 @@ export class AuthController {
     const accessToken = await this.authService.refreshToken(req.user);
 
     res.cookie('accessToken', accessToken, {
+      domain: process.env.FRONT_SERVER,
+      secure: true,
       httpOnly: true,
       maxAge: 2 * 60 * 60 * 1000, //2h
     });

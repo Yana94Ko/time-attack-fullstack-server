@@ -15,6 +15,8 @@ export class UsersController {
     const accessToken = await this.usersService.signUp(dto);
 
     res.cookie('accessToken', accessToken, {
+      domain: process.env.FRONT_SERVER,
+      secure: true,
       httpOnly: true,
       maxAge: 2 * 60 * 60 * 1000, //2h
     });
