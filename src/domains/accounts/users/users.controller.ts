@@ -15,7 +15,8 @@ export class UsersController {
     const accessToken = await this.usersService.signUp(dto);
 
     res.cookie('accessToken', accessToken, {
-      domain: process.env.FRONT_SERVER,
+      domain:
+        'port-0-time-attack-fullstack-server-am952nltdolcl9.sel5.cloudtype.app',
       secure: true,
       httpOnly: true,
       sameSite: 'none',

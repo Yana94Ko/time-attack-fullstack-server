@@ -18,7 +18,8 @@ export class AuthController {
     const accessToken = await this.authService.logIn(dto);
 
     res.cookie('accessToken', accessToken, {
-      domain: process.env.FRONT_SERVER,
+      domain:
+        'port-0-time-attack-fullstack-server-am952nltdolcl9.sel5.cloudtype.app',
       secure: true,
       httpOnly: true,
       sameSite: 'none',
@@ -47,7 +48,8 @@ export class AuthController {
     const accessToken = await this.authService.refreshToken(req.user);
 
     res.cookie('accessToken', accessToken, {
-      domain: process.env.FRONT_SERVER,
+      domain:
+        'port-0-time-attack-fullstack-server-am952nltdolcl9.sel5.cloudtype.app',
       secure: true,
       httpOnly: true,
       sameSite: 'none',
