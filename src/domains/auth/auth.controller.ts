@@ -38,6 +38,9 @@ export class AuthController {
     res.clearCookie('accessToken', {
       domain:
         'port-0-time-attack-fullstack-server-am952nltdolcl9.sel5.cloudtype.app',
+      secure: true,
+      httpOnly: true,
+      sameSite: 'none',
     });
     return `${user.email} successfully logout`;
   }
